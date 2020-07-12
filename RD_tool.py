@@ -31,29 +31,52 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 		self.btnQuit.clicked.connect(lambda: self.widget.close_app(self))		
 		self.btnBrowse.clicked.connect(lambda: self.browse(self.lineEditAdress, self.labSize))
 		self.btnOpenLocation.clicked.connect(lambda: self.open_local_folder())
-		self.btnBrowseOriginal.clicked.connect(lambda: self.browse(self.formOriginalPath, self.labSizeOriginal))
-		self.btnBrowseDedup.clicked.connect(lambda: self.browse(self.formDedupPath, self.labSizeDedup))
+		# Browse files - difference
+		self.btnBrowseOriginal.clicked.connect(lambda: self.browse(
+			self.formOriginalPath, self.labSizeOriginal)
+		)
+		self.btnBrowseDedup.clicked.connect(lambda: self.browse(
+			self.formDedupPath, self.labSizeDedup)
+		)
+		# Browse files - intersection
+		self.btnBrowseOriginalIntersect.clicked.connect(lambda: self.browse(
+			self.formOriginalPathIntersect, self.labSizeOriginalIntersect)
+		)
+		self.btnBrowseDedupIntersect.clicked.connect(lambda: self.browse(
+			self.formDedupPathIntersect, self.labSizeDedupIntersect)
+		)
+		# Calculate difference
 		self.btnCalculate.clicked.connect(lambda: self.calculate())
+		# Calculate intersection
+		self.btnCalculateIntersect.clicked.connect(lambda: self.calculate_intersection())
 
-	def quick_open(self, fname):		
+	def quick_open(self, fname):
+		''' Quick open file, then return a list of all element according to separator '''	
 		with open(fname, 'r', encoding='utf-8') as f:
-			if fname.endswith(('.CSV', '.Csv', '.CSv', 'cSV', 'cSv', 'csv', 'csV', 'CsV')):
+			# The goal is to get all elements inside a file where elements are separate by separator
+			if fname.lower().endswith('.csv'):
 				self.is_csv = True
 				reader = csv.reader(f)
-				csv_list = [e[0] for e in reader]
+				csv_list = [e[0] for e in reader if e[0] != '']
 				return csv_list
-			elif fname.endswith(('.TXT', '.Txt', '.TXt', 'tXT', 'tXt', 'txt', 'txT', 'TxT')):
+			elif fname.lower().endswith('.txt'):
 				self.is_csv = False
 				reader = f.read()
-				csv_list = reader.split(self.file_separator)
+				csv_list = [entry for entry in reader.split(self.file_separator) if entry != '']
 				return csv_list
 			else:
-				self.msg_box(msg_text="Format not recognized", msg_type=QMessageBox.Warning, msg_title="File extension error", autoclose=True, timeout=2500)
+				self.msg_box(msg_text="Format not recognized", 
+					msg_type=QMessageBox.Warning, 
+					msg_title="File extension error", 
+					autoclose=True, timeout=2500
+				)
 
 	def gui_setup(self):
 		self.spinBoxNbMorceau.setMinimum(2)
-		self.spinBoxNbMorceau.setMaximum(25)
+		self.spinBoxNbMorceau.setMaximum(250)
 		self.spinBoxNbMorceau.setValue(2)
+		self.setWindowTitle('RD tool')
+		self.setWindowIcon(QIcon('static/icone.ico'))
 		# Experimentation:
 		#self.lineEditAdress.isUndoAvailable(False)
 
@@ -65,13 +88,19 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 		self.move((size_ecran.width() - size_fenetre.width()) / 2, (size_ecran.height() - size_fenetre.height()) / 2)
 
 
-	def msg_box(self, msg_text="", msg_title="", msg_type=QMessageBox.Information, need_value=False, option_1=QMessageBox.Ok, 
-		option_2=QMessageBox.Cancel, style_msg_box='''QMessageBox {background-color: #2AC777;}
-		QMessageBox QLabel, QPushButton {color: #ffffff; font-family: verdana; font-size: 16px;}
-		QMessageBox QPushButton {background-color: #333333; border-radius: 4px; padding: 2px;}
-		QMessageBox QPushButton:hover {background-color: #4E6057;}
-		''', autoclose=False, timeout=3000):
+	def msg_box(self, msg_text="", msg_title="", 
+			msg_type=QMessageBox.Information, 
+			need_value=False, 
+			option_1=QMessageBox.Ok, option_2=QMessageBox.Cancel, 
+			style_msg_box='''QMessageBox {background-color: #2AC777;}
+			QMessageBox QLabel, QPushButton {color: #ffffff; font-family: verdana; font-size: 16px;}
+			QMessageBox QPushButton {background-color: #333333; border-radius: 4px; padding: 2px;}
+			QMessageBox QPushButton:hover {background-color: #4E6057;}
+			''', autoclose=False, timeout=3000
+		):
+		# A popup that auto close after x (3 by default) seconds
 		msg = custom_widget.TimedMessageBox()
+		# Configure popup (icon, text, title...)
 		msg.setIcon(msg_type)
 		msg.setText(msg_text)
 		msg.setWindowTitle(msg_title)
@@ -86,6 +115,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 		return retval
 
 	def cut(self, mode='csv'):
+		''' Open file then cut into multiples parts (given by the user) '''
+		# Get input file path and file output name from user thanks to the widgets
 		fname = self.lineEditAdress.text()
 		output_name = self.lineEditOutputName.text()
 		if fname:
@@ -101,6 +132,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 			if not output_name:
 				output_name = 'Unknow name file'
 			[
+			# Save 
 			csv_cuter.save('%s - %s - part%s.csv' % (output_name, 
 				datetime.datetime.now().strftime('%Hh%Mm%Ss'), str(i+1) ), content=e) 
 			for i,e in enumerate(txt_result_list)
@@ -111,8 +143,37 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 			self.statusbar.showMessage('Empty path', 3000)
 
 	def calculate(self):
+		''' Calculate difference between two files: 
+			If file A has "abcd" and B has "ab", output should be "cd" 
+		'''
 		original_path = self.formOriginalPath.text()
 		dedup_path = self.formDedupPath.text()
+		try:
+			original_file = self.quick_open(original_path)
+			dedup_file = self.quick_open(dedup_path)
+		except FileNotFoundError:
+			# Popup to inform the user (here the message is a warning)
+			self.msg_box(msg_text="File not found", 
+				msg_type=QMessageBox.Warning, msg_title="Dedup tool error", 
+				autoclose=True, timeout=2500
+			)
+			return
+		if self.is_csv:
+			original_set = set(original_file)
+			dedup_set = set(dedup_file)
+
+		else:
+			original_set = set(original_file)
+			dedup_set = set(dedup_file)
+		result_set = original_set - dedup_set
+		self.save(self.file_separator.join(result_set))
+		self.msg_box(msg_text="Diff calculation finished", msg_type=QMessageBox.Information, msg_title="Dedup tool", autoclose=True, timeout=2500)	
+
+	def calculate_intersection(self):
+		''' If file A has "abcd" and B has "ab", output should be "ab" '''
+		# Retrieve file paths (both original and dedup)
+		original_path = self.formOriginalPathIntersect.text()
+		dedup_path = self.formDedupPathIntersect.text()
 		try:
 			original_file = self.quick_open(original_path)
 			dedup_file = self.quick_open(dedup_path)
@@ -126,17 +187,19 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 		else:
 			original_set = set(original_file)
 			dedup_set = set(dedup_file)
-		result_set = original_set - dedup_set
-		self.save(self.file_separator.join(result_set))
-		self.msg_box(msg_text="Finished", msg_type=QMessageBox.Information, msg_title="Dedup tool", autoclose=True, timeout=2500)	
+		result_set = original_set.intersection(dedup_set)
+		save_operation = self.save(self.file_separator.join(result_set))
+		if save_operation == 'saved':
+			self.msg_box(msg_text="Intersection calculation finished", msg_type=QMessageBox.Information, msg_title="Dedup tool", autoclose=True, timeout=2500)
 
 	def save(self, content):
+		''' Popup a dialog to get the path, then save as file on disk '''
 		options = QFileDialog.Options()
 		filename, _ = QFileDialog.getSaveFileName(self, 'QFileDialog.getSaveFileName()', "","Text document(*.txt);;CSV file(*.csv)", options=options)
 		if filename:
 			with open(filename, 'w', encoding='utf-8') as f:
 				f.write(content)
-				self.msg_box(msg_text="Saved", msg_type=QMessageBox.Information, msg_title="Dedup tool", autoclose=True, timeout=2000)
+				return 'saved'
 
 	def open_folder(self, path):		
 		subprocess.run(['explorer', os.path.realpath(path)])
@@ -149,7 +212,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 		options = QFileDialog.Options()
 		current_dir = os.getcwd()
 		filename, _ = QFileDialog.getOpenFileName(self, 'QFileDialog.getOpenFileName()', current_dir,
-			"CSV file(*.csv);;CSV file(*.txt);;All Files (*)", options=options)
+			"CSV file(*.csv);;Text document(*.txt);;All Files (*)", options=options)
 		if filename:
 			print(filename)
 			return filename
@@ -166,6 +229,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 				label.setText('%s Ko' % self.get_size(path))
 
 	def get_size(self, path):
+		''' Take a file path as input, calculate then return its size '''
 		try:
 			if path:
 				size = round(os.path.getsize(path) / 1000)

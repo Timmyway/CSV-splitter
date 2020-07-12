@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'design.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -22,33 +24,34 @@ class Ui_MainWindow(object):
 "QTextEdit {\n"
 "background: qlineargradient( x1:0 y0:1, x2:1 y2:0, stop:0 #0D4242, stop:1 #082222);\n"
 "color: #ffffff;\n"
-"border-radius: 18px;\n"
+"border-radius: 6px;\n"
 "padding: 5px;\n"
 "border: 1px solid #CBC9D2;\n"
 "}\n"
 "\n"
 "QPushButton {\n"
-"border-radius: 8px;\n"
-"width: 60px;\n"
+"border-radius: 4px;\n"
+"width: 80px;\n"
 "color: #ffffff;\n"
 "border-width: 1px;\n"
 "border-color: #ffffff;\n"
 "border-style: solid;\n"
-"padding: 3px;\n"
+"padding: 4px;\n"
 "font-size: 16px;\n"
 "background-color: #514ea7;\n"
 "margin-bottom: 10px;\n"
 "}\n"
 "QPushButton:hover {\n"
-"background-color: grey;\n"
+"    background-color: #6562bb;\n"
 "}\n"
 "\n"
 "QLineEdit {\n"
-"border-radius: 8px;\n"
+"border-radius: 6px;\n"
 "border-style: solid;\n"
 "border-color: #333333;\n"
 "background-color: #454545;\n"
 "color: #ffffff;\n"
+"font-size: 16px;\n"
 "}\n"
 "\n"
 "QTabWidget::tab_Calendar {\n"
@@ -99,8 +102,16 @@ class Ui_MainWindow(object):
 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.formLayout = QtWidgets.QFormLayout(self.centralwidget)
-        self.formLayout.setObjectName("formLayout")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.btnOpenLocation = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btnOpenLocation.sizePolicy().hasHeightForWidth())
+        self.btnOpenLocation.setSizePolicy(sizePolicy)
+        self.btnOpenLocation.setObjectName("btnOpenLocation")
+        self.gridLayout_2.addWidget(self.btnOpenLocation, 0, 0, 1, 1)
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName("tabWidget")
         self.tab_5 = QtWidgets.QWidget()
@@ -186,18 +197,16 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_5, "")
         self.tab_6 = QtWidgets.QWidget()
         self.tab_6.setObjectName("tab_6")
-        self.gridLayout_5 = QtWidgets.QGridLayout(self.tab_6)
-        self.gridLayout_5.setObjectName("gridLayout_5")
-        self.formLayout_4 = QtWidgets.QFormLayout()
-        self.formLayout_4.setObjectName("formLayout_4")
-        self.labOriginal = QtWidgets.QLabel(self.tab_6)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.tab_6)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.btnCalculate = QtWidgets.QPushButton(self.tab_6)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labOriginal.sizePolicy().hasHeightForWidth())
-        self.labOriginal.setSizePolicy(sizePolicy)
-        self.labOriginal.setObjectName("labOriginal")
-        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.labOriginal)
+        sizePolicy.setHeightForWidth(self.btnCalculate.sizePolicy().hasHeightForWidth())
+        self.btnCalculate.setSizePolicy(sizePolicy)
+        self.btnCalculate.setObjectName("btnCalculate")
+        self.gridLayout_3.addWidget(self.btnCalculate, 4, 0, 1, 1)
         self.labDedup = QtWidgets.QLabel(self.tab_6)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -205,7 +214,15 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labDedup.sizePolicy().hasHeightForWidth())
         self.labDedup.setSizePolicy(sizePolicy)
         self.labDedup.setObjectName("labDedup")
-        self.formLayout_4.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labDedup)
+        self.gridLayout_3.addWidget(self.labDedup, 3, 0, 1, 1)
+        self.labOriginal = QtWidgets.QLabel(self.tab_6)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labOriginal.sizePolicy().hasHeightForWidth())
+        self.labOriginal.setSizePolicy(sizePolicy)
+        self.labOriginal.setObjectName("labOriginal")
+        self.gridLayout_3.addWidget(self.labOriginal, 2, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.formOriginalPath = QtWidgets.QLineEdit(self.tab_6)
@@ -222,7 +239,7 @@ class Ui_MainWindow(object):
         self.labSizeOriginal = QtWidgets.QLabel(self.tab_6)
         self.labSizeOriginal.setObjectName("labSizeOriginal")
         self.horizontalLayout_5.addWidget(self.labSizeOriginal)
-        self.formLayout_4.setLayout(0, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_5)
+        self.gridLayout_3.addLayout(self.horizontalLayout_5, 2, 1, 1, 1)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.formDedupPath = QtWidgets.QLineEdit(self.tab_6)
@@ -239,26 +256,72 @@ class Ui_MainWindow(object):
         self.labSizeDedup = QtWidgets.QLabel(self.tab_6)
         self.labSizeDedup.setObjectName("labSizeDedup")
         self.horizontalLayout_6.addWidget(self.labSizeDedup)
-        self.formLayout_4.setLayout(1, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_6)
-        self.btnCalculate = QtWidgets.QPushButton(self.tab_6)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnCalculate.sizePolicy().hasHeightForWidth())
-        self.btnCalculate.setSizePolicy(sizePolicy)
-        self.btnCalculate.setObjectName("btnCalculate")
-        self.formLayout_4.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.btnCalculate)
-        self.gridLayout_5.addLayout(self.formLayout_4, 0, 0, 1, 1)
+        self.gridLayout_3.addLayout(self.horizontalLayout_6, 3, 1, 1, 1)
         self.tabWidget.addTab(self.tab_6, "")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.SpanningRole, self.tabWidget)
-        self.btnOpenLocation = QtWidgets.QPushButton(self.centralwidget)
+        self.tab = QtWidgets.QWidget()
+        self.tab.setObjectName("tab")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.tab)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.labOriginalIntersect = QtWidgets.QLabel(self.tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labOriginalIntersect.sizePolicy().hasHeightForWidth())
+        self.labOriginalIntersect.setSizePolicy(sizePolicy)
+        self.labOriginalIntersect.setObjectName("labOriginalIntersect")
+        self.gridLayout_5.addWidget(self.labOriginalIntersect, 0, 0, 1, 1)
+        self.btnCalculateIntersect = QtWidgets.QPushButton(self.tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnOpenLocation.sizePolicy().hasHeightForWidth())
-        self.btnOpenLocation.setSizePolicy(sizePolicy)
-        self.btnOpenLocation.setObjectName("btnOpenLocation")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.btnOpenLocation)
+        sizePolicy.setHeightForWidth(self.btnCalculateIntersect.sizePolicy().hasHeightForWidth())
+        self.btnCalculateIntersect.setSizePolicy(sizePolicy)
+        self.btnCalculateIntersect.setObjectName("btnCalculateIntersect")
+        self.gridLayout_5.addWidget(self.btnCalculateIntersect, 4, 0, 1, 1)
+        self.labDedupIntersect = QtWidgets.QLabel(self.tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labDedupIntersect.sizePolicy().hasHeightForWidth())
+        self.labDedupIntersect.setSizePolicy(sizePolicy)
+        self.labDedupIntersect.setObjectName("labDedupIntersect")
+        self.gridLayout_5.addWidget(self.labDedupIntersect, 1, 0, 1, 1)
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.formOriginalPathIntersect = QtWidgets.QLineEdit(self.tab)
+        self.formOriginalPathIntersect.setObjectName("formOriginalPathIntersect")
+        self.horizontalLayout_7.addWidget(self.formOriginalPathIntersect)
+        self.btnBrowseOriginalIntersect = QtWidgets.QPushButton(self.tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btnBrowseOriginalIntersect.sizePolicy().hasHeightForWidth())
+        self.btnBrowseOriginalIntersect.setSizePolicy(sizePolicy)
+        self.btnBrowseOriginalIntersect.setObjectName("btnBrowseOriginalIntersect")
+        self.horizontalLayout_7.addWidget(self.btnBrowseOriginalIntersect)
+        self.labSizeOriginalIntersect = QtWidgets.QLabel(self.tab)
+        self.labSizeOriginalIntersect.setObjectName("labSizeOriginalIntersect")
+        self.horizontalLayout_7.addWidget(self.labSizeOriginalIntersect)
+        self.gridLayout_5.addLayout(self.horizontalLayout_7, 0, 1, 1, 1)
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.formDedupPathIntersect = QtWidgets.QLineEdit(self.tab)
+        self.formDedupPathIntersect.setObjectName("formDedupPathIntersect")
+        self.horizontalLayout_8.addWidget(self.formDedupPathIntersect)
+        self.btnBrowseDedupIntersect = QtWidgets.QPushButton(self.tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btnBrowseDedupIntersect.sizePolicy().hasHeightForWidth())
+        self.btnBrowseDedupIntersect.setSizePolicy(sizePolicy)
+        self.btnBrowseDedupIntersect.setObjectName("btnBrowseDedupIntersect")
+        self.horizontalLayout_8.addWidget(self.btnBrowseDedupIntersect)
+        self.labSizeDedupIntersect = QtWidgets.QLabel(self.tab)
+        self.labSizeDedupIntersect.setObjectName("labSizeDedupIntersect")
+        self.horizontalLayout_8.addWidget(self.labSizeDedupIntersect)
+        self.gridLayout_5.addLayout(self.horizontalLayout_8, 1, 1, 1, 1)
+        self.tabWidget.addTab(self.tab, "")
+        self.gridLayout_2.addWidget(self.tabWidget, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1132, 21))
@@ -281,12 +344,13 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuEdition.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.btnOpenLocation.setText(_translate("MainWindow", "Open Local Folder"))
         self.label_2.setText(_translate("MainWindow", "Part number"))
         self.label.setText(_translate("MainWindow", "File path"))
         self.btnBrowse.setText(_translate("MainWindow", "Browse"))
@@ -295,15 +359,22 @@ class Ui_MainWindow(object):
         self.btnProcess.setText(_translate("MainWindow", "Process"))
         self.btnQuit.setText(_translate("MainWindow", "Quit"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "Dedup"))
-        self.labOriginal.setText(_translate("MainWindow", "Original"))
+        self.btnCalculate.setText(_translate("MainWindow", "Difference"))
         self.labDedup.setText(_translate("MainWindow", "Dedup"))
+        self.labOriginal.setText(_translate("MainWindow", "Original"))
         self.btnBrowseOriginal.setText(_translate("MainWindow", "Browse"))
         self.labSizeOriginal.setText(_translate("MainWindow", "0 Ko"))
         self.btnBrowseDedup.setText(_translate("MainWindow", "Browse"))
         self.labSizeDedup.setText(_translate("MainWindow", "0 Ko"))
-        self.btnCalculate.setText(_translate("MainWindow", "Calculate"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("MainWindow", "Dedup difference"))
-        self.btnOpenLocation.setText(_translate("MainWindow", "Open Local Folder"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("MainWindow", "Difference"))
+        self.labOriginalIntersect.setText(_translate("MainWindow", "Original"))
+        self.btnCalculateIntersect.setText(_translate("MainWindow", "Intersection"))
+        self.labDedupIntersect.setText(_translate("MainWindow", "Dedup"))
+        self.btnBrowseOriginalIntersect.setText(_translate("MainWindow", "Browse"))
+        self.labSizeOriginalIntersect.setText(_translate("MainWindow", "0 Ko"))
+        self.btnBrowseDedupIntersect.setText(_translate("MainWindow", "Browse"))
+        self.labSizeDedupIntersect.setText(_translate("MainWindow", "0 Ko"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Intersection"))
         self.menuMenu.setTitle(_translate("MainWindow", "Menu"))
         self.menuEdition.setTitle(_translate("MainWindow", "Edition"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
@@ -318,4 +389,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
