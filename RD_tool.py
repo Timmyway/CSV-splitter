@@ -11,7 +11,7 @@ import subprocess
 import csv_cuter
 from custom_widget import CustomWidget
 import tim_custom_widget as custom_widget
-import set_difference
+from set_operation import SetOperation
 
 class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 	def __init__(self, parent=None):
@@ -45,18 +45,28 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 		self.btnBrowseDedupIntersect.clicked.connect(lambda: self.browse(
 			self.formDedupPathIntersect, self.labSizeDedupIntersect)
 		)
+		# Browse files - union
+		self.btnBrowseOriginalUnion.clicked.connect(lambda: self.browse(
+			self.formOriginalPathUnion, self.labSizeOriginalUnion)
+		)
+		self.btnBrowseDedupUnion.clicked.connect(lambda: self.browse(
+			self.formDedupPathUnion, self.labSizeDedupUnion)
+		)
 		# Calculate difference
-		self.btnCalculate.clicked.connect(lambda: self.calculate())
+		self.btnCalculate.clicked.connect(lambda: self.calculate(operation='difference'))
 		# Calculate intersection
-		self.btnCalculateIntersect.clicked.connect(lambda: self.calculate_intersection())
+		self.btnCalculateIntersect.clicked.connect(lambda: self.calculate('intersection'))
+		# Calculate union
+		self.btnCalculateUnion.clicked.connect(lambda: self.calculate('union'))
 
 	def quick_open(self, fname):
-		''' Quick open file, then return a list of all element according to separator '''	
+		''' Quick open file, then return a list of all element according to separator '''
+		print('Open file: ', fname)	
 		with open(fname, 'r', encoding='utf-8') as f:
 			# The goal is to get all elements inside a file where elements are separate by separator
 			if fname.lower().endswith('.csv'):
 				self.is_csv = True
-				reader = csv.reader(f)
+				reader = csv.reader(f)				
 				csv_list = [e[0] for e in reader if e[0] != '']
 				return csv_list
 			elif fname.lower().endswith('.txt'):
@@ -140,57 +150,49 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 			self.open_local_folder()
 			self.statusbar.showMessage('All tasks are processed', 3000)
 		else:
-			self.statusbar.showMessage('Empty path', 3000)
+			self.statusbar.showMessage('Empty path', 3000)	
 
-	def calculate(self):
-		''' Calculate difference between two files: 
-			If file A has "abcd" and B has "ab", output should be "cd" 
-		'''
-		original_path = self.formOriginalPath.text()
-		dedup_path = self.formDedupPath.text()
-		try:
-			original_file = self.quick_open(original_path)
-			dedup_file = self.quick_open(dedup_path)
-		except FileNotFoundError:
-			# Popup to inform the user (here the message is a warning)
-			self.msg_box(msg_text="File not found", 
-				msg_type=QMessageBox.Warning, msg_title="Dedup tool error", 
-				autoclose=True, timeout=2500
-			)
-			return
-		if self.is_csv:
-			original_set = set(original_file)
-			dedup_set = set(dedup_file)
-
-		else:
-			original_set = set(original_file)
-			dedup_set = set(dedup_file)
-		result_set = original_set - dedup_set
-		self.save(self.file_separator.join(result_set))
-		self.msg_box(msg_text="Diff calculation finished", msg_type=QMessageBox.Information, msg_title="Dedup tool", autoclose=True, timeout=2500)	
-
-	def calculate_intersection(self):
+	def calculate(self, operation='difference'):
 		''' If file A has "abcd" and B has "ab", output should be "ab" '''
 		# Retrieve file paths (both original and dedup)
-		original_path = self.formOriginalPathIntersect.text()
-		dedup_path = self.formDedupPathIntersect.text()
+		if operation == 'difference':
+			original_path = self.formOriginalPath.text()
+			dedup_path = self.formDedupPath.text()
+		elif operation == 'intersection':
+			original_path = self.formOriginalPathIntersect.text()
+			dedup_path = self.formDedupPathIntersect.text()
+		elif operation == 'union':
+			original_path = self.formOriginalPathUnion.text()
+			dedup_path = self.formDedupPathUnion.text()
 		try:
 			original_file = self.quick_open(original_path)
-			dedup_file = self.quick_open(dedup_path)
+			dedup_file = self.quick_open(dedup_path)			
 		except FileNotFoundError:
-			self.msg_box(msg_text="File not found", msg_type=QMessageBox.Warning, msg_title="Dedup tool error", autoclose=True, timeout=2500)
-			return
-		if self.is_csv:
-			original_set = set(original_file)
-			dedup_set = set(dedup_file)
-
-		else:
-			original_set = set(original_file)
-			dedup_set = set(dedup_file)
-		result_set = original_set.intersection(dedup_set)
+			self.msg_box(msg_text="File not found", 
+				msg_type=QMessageBox.Warning, 
+				msg_title="Dedup tool error", 
+				autoclose=True, timeout=2500
+			)
+			return		
+		# According to the kind of operation, decide to call the appropriate method
+		set_operation = SetOperation(original_file, dedup_file)
+		if operation == 'difference':
+			set_operation.get_difference()
+			result_set = set_operation.difference
+		elif operation == 'intersection':
+			set_operation.get_intersection()
+			result_set = set_operation.intersection
+		elif operation == 'union':
+			set_operation.get_union()
+			result_set = set_operation.union
+		# Save result to the disk, then notify the user
+		print('Result: = ', result_set)
 		save_operation = self.save(self.file_separator.join(result_set))
 		if save_operation == 'saved':
-			self.msg_box(msg_text="Intersection calculation finished", msg_type=QMessageBox.Information, msg_title="Dedup tool", autoclose=True, timeout=2500)
+			self.msg_box(msg_text=f"{operation.capitalize()} calculation finished", 
+				msg_type=QMessageBox.Information, msg_title="Dedup tool", 
+				autoclose=True, timeout=2500
+			)	
 
 	def save(self, content):
 		''' Popup a dialog to get the path, then save as file on disk '''
